@@ -1,4 +1,27 @@
 /**
+ * MIT License
+ * Copyright (c) 2022 Kartavya Patel
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+/**
  * Helps to create HTML in JavaScript. Uses JSON to store attributes and elements.
  */
 export default class json2html {
@@ -10,11 +33,28 @@ export default class json2html {
      * Creates string of attributes from attributes object.
      */
     #get_attrs(attrs_obj) {
-        let output = "",
-            attrs_array = Object.entries(attrs_obj);
+        let output = "";
 
-        for (let index = 0; index < attrs_array.length; index++) {
-            output += `${attrs_array[index][0]}="${attrs_array[index][1]}" `;
+        let handle_object = (attrs_object) => {
+            let attrs_array = Object.entries(attrs_object);
+
+            for (let index = 0; index < attrs_array.length; index++)
+                output += `${attrs_array[index][0]}="${attrs_array[index][1]}" `;
+        };
+
+        if (typeof attrs_obj == "object" && attrs_obj.length == undefined) {
+            handle_object(attrs_obj);
+        } else if (
+            typeof attrs_obj == "object" &&
+            attrs_obj.length != undefined
+        ) {
+            for (let index = 0; index < attrs_obj.length; index++) {
+                const element = attrs_obj[index];
+
+                if (typeof element == "object" && element.length == undefined)
+                    handle_object(element);
+                else output += `${element} `;
+            }
         }
 
         return output;
@@ -82,76 +122,56 @@ export default class json2html {
     }
 
     /**
-     * '\<div\>' tag.
-     * @param attributes Can be object or list of objects.
-     * @param innerHTML Can be object/string or list of objects/strings.
-     * @returns '\<div\>' tag.
+     * \<div\> tag.
+     * @param attributes Object
+     * @param innerHTML Object or String
+     * @returns \<div\> tag.
      */
     div(attributes = {}, innerHTML = "") {
-        if (typeof attributes == "object" && attributes.length != undefined) {
-            let output = [];
-
-            for (let index = 0; index < attributes.length; index++) {
-                try {
-                    output.push({ div: [attributes[index], innerHTML[index]] });
-                } catch (error) {
-                    alert(error);
-                }
-            }
-            return output;
-        }
         return { div: [attributes, innerHTML] };
     }
 
     /**
-     * '\<a\>' tag.
-     * @param href Can be string or list of strings.
-     * @param innerHTML Can be object/string or list of objects/strings.
-     * @param attributes Can be object or list of objects.
-     * @returns '\<a\>' tag.
+     * \<a\> tag
+     * @param href String
+     * @param innerHTML Object or string
+     * @param attributes Object
+     * @returns \<a\> tag
      */
     a(href = "#", innerHTML = "", attributes = {}) {
-        if (typeof href == "object" && href.length != undefined) {
-            let output = [];
-
-            for (let index = 0; index < href.length; index++) {
-                try {
-                    attributes[index].href = href[index];
-                    output.push({ div: [attributes[index], innerHTML[index]] });
-                } catch (error) {
-                    alert(error);
-                }
-            }
-            return output;
-        }
         attributes.href = href;
         return { a: [attributes, innerHTML] };
     }
 
     /**
-     * '\<img\>' tag.
-     * @param src Can be string or list of strings.
-     * @param alt Can be string or list of strings.
-     * @param attributes Can be object or list of objects.
-     * @returns '\<img\>' tag.
+     * \<img\> tag
+     * @param src String
+     * @param alt String
+     * @param attributes Object
+     * @returns \<img\> tag
      */
     img(src = "", alt = "", attributes = {}) {
-        if (typeof src == "object" && src.length != undefined) {
-            let output = [];
-
-            for (let index = 0; index < src.length; index++) {
-                try {
-                    attributes[index].src = src[index];
-                    attributes[index].alt = alt[index];
-                    output.push({ div: [attributes[index], innerHTML[index]] });
-                } catch (error) {
-                    alert(error);
-                }
-            }
-            return output;
-        }
         attributes.src = src;
         attributes.alt = alt;
         return { img: [attributes] };
+    }
+
+    /**
+     * \<input\> tag
+     * @param attributes Object
+     * @returns \<input\> tag
+     */
+    input(attributes = {}) {
+        return { input: [attributes] };
+    }
+
+    /**
+     * \<label\> tag
+     * @param attributes Object
+     * @param innerHTML Object or string
+     * @returns \<label\> tag
+     */
+    label(attributes = {}, innerHTML = "") {
+        return { label: [attributes, innerHTML] };
     }
 }
