@@ -174,4 +174,15 @@ export default class json2html {
     label(attributes = {}, innerHTML = "") {
         return { label: [attributes, innerHTML] };
     }
+
+    /**
+     * \<iframe\> tag
+     * @param src String
+     * @param attributes Object
+     * @returns \<iframe\> tag
+     */
+    iframe(src = "", attributes = {}) {
+        attributes.src = src;
+        return { iframe: [attributes] };
+    }
 }
