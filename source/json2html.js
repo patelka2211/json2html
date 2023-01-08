@@ -24,7 +24,7 @@
 /**
  * Helps to create HTML in JavaScript. Uses JSON to store attributes and elements.
  */
-export default class json2html {
+export default class j2h {
     constructor() {
         this.list = [];
     }
@@ -65,7 +65,8 @@ export default class json2html {
      * @param element Takes object (e.g. this.list)
      * @returns Object itself.
      */
-    add(element) {
+    append(element = null) {
+        if (element == null) return;
         this.list.push(element);
         return this;
     }
@@ -75,34 +76,35 @@ export default class json2html {
      * @param input Takes object (e.g. this.list) (Default)
      * @returns HTML string.
      */
-    get_html(input = this.list) {
+    render(input = this.list) {
         let output = "";
 
-        if (typeof input == "object" && input.length == undefined) {
-            let array = Object.entries(input);
-            for (let index = 0; index < array.length; index++) {
-                const element = array[index];
-                if (element[1].length == 2) {
-                    if (typeof element[1][1] == "object") {
-                        output += `<${element[0]} ${this.#get_attrs(
-                            element[1][0]
-                        )}>${this.get_html(element[1][1])}</${element[0]}>`;
+        if (typeof input == "object") {
+            if (input.length == undefined) {
+                let array = Object.entries(input);
+                for (let index = 0; index < array.length; index++) {
+                    const element = array[index];
+                    if (element[1].length == 2) {
+                        if (typeof element[1][1] == "object") {
+                            output += `<${element[0]} ${this.#get_attrs(
+                                element[1][0]
+                            )}>${this.render(element[1][1])}</${element[0]}>`;
+                        } else
+                            output += `<${element[0]} ${this.#get_attrs(
+                                element[1][0]
+                            )}>${element[1][1]}</${element[0]}>`;
                     } else
                         output += `<${element[0]} ${this.#get_attrs(
                             element[1][0]
-                        )}>${element[1][1]}</${element[0]}>`;
-                } else
-                    output += `<${element[0]} ${this.#get_attrs(
-                        element[1][0]
-                    )}/>`;
+                        )}/>`;
+                }
+            } else {
+                for (let index = 0; index < input.length; index++) {
+                    output += this.render(input[index]);
+                }
             }
-
             return output;
-        }
-
-        for (let index = 0; index < input.length; index++) {
-            output += this.get_html(input[index]);
-        }
+        } else output += String(input);
 
         return output;
     }
