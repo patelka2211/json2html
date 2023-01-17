@@ -1,0 +1,95 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+body {
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  margin: 0;
+  padding: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+body #root {
+  width: calc(100vw - 20px);
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+body #root #j2h-logo {
+  margin: 16px;
+  width: 90%;
+  max-width: 80px;
+}
+body #root p {
+  margin: 0;
+  margin-bottom: 16px;
+  text-align: center;
+}
+body #root #j2h-description {
+  font-weight: 500;
+  font-size: 20px;
+}
+body #root #for-large-screens {
+  display: block;
+}
+body #root #for-small-screens {
+  display: none;
+}
+body #root a {
+  margin-bottom: 16px;
+  text-decoration: none;
+  color: #06c;
+}
+body #root #example-container {
+  width: 100%;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+body #root #example-container div {
+  overflow: scroll;
+  width: calc(50% - 9px);
+  max-width: calc(50% - 9px);
+  border-radius: 6px;
+  border: 2px solid rgba(145, 145, 142, 0.16);
+  max-height: 64vh;
+  display: flex;
+  flex-direction: column;
+}
+body #root #example-container div pre {
+  padding: 6px 0;
+  margin: 0;
+  font-weight: 500;
+  font-size: 16px;
+}
+body #root #example-container div pre:hover {
+  background-color: #f7f7f5;
+}
+
+@media (max-width: 600px) {
+  body #root #for-large-screens {
+    display: none;
+  }
+  body #root #for-small-screens {
+    display: block;
+  }
+  body #root #example-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+  body #root #example-container div {
+    width: 100%;
+    max-width: 100%;
+    max-height: 64vh;
+  }
+  body #root #example-container #json-input-container {
+    margin-bottom: 10px;
+  }
+}

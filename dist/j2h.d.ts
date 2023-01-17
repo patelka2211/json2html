@@ -10,11 +10,7 @@ type CompositeAttribute = [
     PairedAttribute,
     BooleanAttributeName | BooleanAttributeName[]
 ];
-type Attributes =
-    | BooleanAttributeName
-    | BooleanAttributeName[]
-    | CompositeAttribute
-    | PairedAttribute;
+type Attributes = BooleanAttributeName | BooleanAttributeName[] | CompositeAttribute | PairedAttribute;
 type ValidValue = string | ValidPair | ValidPair[];
 type ValidPair = {
     [_: string]: [Attributes, ValidValue];
@@ -139,19 +135,9 @@ declare class json2html {
     append(input: ValidPair): this;
     render(input?: ValidPair[], root?: HTMLElement): void;
 }
-/**
- * j2h can be used to create html using Javascript.
- */
-export declare const j2h: {
+declare const j2h: {
     setRoot: (root: HTMLElement) => json2html;
-    element: <Tag extends keyof elements>(
-        tagName: Tag,
-        attributes?: Attributes,
-        innerHTMl?: ValidValue
-    ) => ValidPair;
-    setAttribute: (
-        element: HTMLElement | json2html,
-        attributes: Attributes
-    ) => HTMLElement;
+    element: <Tag extends keyof elements>(tagName: Tag, attributes?: Attributes, innerHTMl?: ValidValue) => ValidPair;
+    setAttribute: (element: HTMLElement | json2html, attributes: Attributes) => HTMLElement;
 };
-export {};
+export default j2h;

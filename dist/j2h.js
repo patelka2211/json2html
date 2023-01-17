@@ -1,8 +1,3 @@
-/**
- * Copyright (c) 2023 Kartavya Patel
- * Repository url: https://github.com/patelka2211/json2html
- */
-
 class json2html {
     constructor(root) {
         this.root = root;
@@ -18,7 +13,6 @@ class json2html {
                 if (Object.prototype.hasOwnProperty.call(item, key)) {
                     const element = document.createElement(key);
                     const value = item[key];
-                    console.log(value);
                     j2h.setAttribute(element, value[0]);
                     if (typeof value[1] == "string") {
                         element.innerText = value[1];
@@ -35,7 +29,7 @@ class json2html {
         });
     }
 }
-export const j2h = {
+const j2h = {
     setRoot: (root) => {
         return new json2html(root);
     },
@@ -85,3 +79,4 @@ export const j2h = {
         return element;
     },
 };
+export default j2h;

@@ -152,7 +152,6 @@ class json2html {
                     const element = document.createElement(key);
                     const value = item[key];
 
-                    console.log(value);
                     j2h.setAttribute(element, value[0]);
 
                     if (typeof value[1] == "string") {
@@ -176,7 +175,7 @@ class json2html {
     }
 }
 
-export const j2h = {
+const j2h = {
     setRoot: (root: HTMLElement) => {
         return new json2html(root);
     },
@@ -247,3 +246,5 @@ export const j2h = {
         return element;
     },
 };
+
+export default j2h;
