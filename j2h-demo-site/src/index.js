@@ -13,7 +13,7 @@ root.append(
         j2h.element(
             "p",
             { id: "j2h-description" },
-            "JSON2HTML, also known as j2h, is a TypeScript and JavaScript library that used to produce UI elements for HTML using JavaScript."
+            "JSON2HTML, also known as j2h, is a TypeScript and JavaScript library that used to produce UI components for HTML using JavaScript."
         )
     )
     .append(
@@ -40,7 +40,10 @@ root.append(
     .append(
         j2h.element(
             "a",
-            { href: "//github.com/patelka2211/json2html", target: "_blank" },
+            {
+                href: "https://github.com/patelka2211/json2html",
+                target: "_blank",
+            },
             "View j2h on GitHub"
         )
     )
@@ -54,7 +57,7 @@ root.append(
         j2h.element(
             "a",
             {
-                href: "//github.com/patelka2211",
+                href: "https://github.com/patelka2211",
                 target: "_blank",
             },
             "Developed in 🇮🇳 with ❤️ by KP"
