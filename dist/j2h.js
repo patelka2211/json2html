@@ -2,13 +2,14 @@ class json2html {
     constructor(root) {
         this.root = root;
         this.list = [];
-        root.innerHTML = "";
     }
     append(input) {
         this.list.push(input);
         return this;
     }
-    render(input = this.list, root = this.root) {
+    render(input = this.list, root = this.root, clearRoot = true) {
+        if (clearRoot)
+            root.innerHTML = "";
         input.forEach((item) => {
             for (const key in item) {
                 if (Object.prototype.hasOwnProperty.call(item, key)) {
@@ -20,10 +21,10 @@ class json2html {
                     }
                     else if (typeof value[1] == "object") {
                         if (value[1].length === undefined) {
-                            this.render([value[1]], element);
+                            this.render([value[1]], element, false);
                         }
                         else if (value[1].length !== undefined) {
-                            this.render(value[1], element);
+                            this.render(value[1], element, false);
                         }
                     }
                     root.appendChild(element);
