@@ -137,7 +137,7 @@ declare class json2html {
 }
 declare const j2h: {
     setRoot: (root: HTMLElement) => json2html;
-    element: <Tag extends keyof elements>(tagName: Tag, attributes?: Attributes, innerHTMl?: ValidValue) => ValidPair;
+    element: <Tag extends keyof elements>(tagName: Tag, attributes?: Attributes, innerHTML?: ValidValue) => ValidPair;
     setAttribute: (element: HTMLElement | json2html, attributes: Attributes) => HTMLElement;
 };
 export default j2h;

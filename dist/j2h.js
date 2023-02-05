@@ -2,6 +2,7 @@ class json2html {
     constructor(root) {
         this.root = root;
         this.list = [];
+        root.innerHTML = "";
     }
     append(input) {
         this.list.push(input);
@@ -16,10 +17,12 @@ class json2html {
                     j2h.setAttribute(element, value[0]);
                     if (typeof value[1] == "string") {
                         element.innerText = value[1];
-                    } else if (typeof value[1] == "object") {
+                    }
+                    else if (typeof value[1] == "object") {
                         if (value[1].length === undefined) {
                             this.render([value[1]], element);
-                        } else if (value[1].length !== undefined) {
+                        }
+                        else if (value[1].length !== undefined) {
                             this.render(value[1], element);
                         }
                     }
@@ -33,9 +36,9 @@ const j2h = {
     setRoot: (root) => {
         return new json2html(root);
     },
-    element: (tagName, attributes = {}, innerHTMl = "") => {
+    element: (tagName, attributes = {}, innerHTML = "") => {
         return {
-            [tagName]: [attributes, innerHTMl],
+            [tagName]: [attributes, innerHTML],
         };
     },
     setAttribute: (element, attributes) => {
@@ -44,34 +47,34 @@ const j2h = {
         }
         if (typeof attributes === "string") {
             element.setAttribute(attributes, "");
-        } else if (
-            typeof attributes === "object" &&
+        }
+        else if (typeof attributes === "object" &&
             attributes.length !== undefined &&
-            typeof attributes[0] === "string"
-        ) {
+            typeof attributes[0] === "string") {
             for (let index = 0; index < attributes.length; index++) {
                 const item = attributes[index];
                 element.setAttribute(item, "");
             }
-        } else if (attributes.length === undefined) {
+        }
+        else if (attributes.length === undefined) {
             for (const key in attributes) {
                 element.setAttribute(key, attributes[key].toString());
             }
-        } else {
+        }
+        else {
             attributes.map((item) => {
                 if (item.length === undefined) {
                     let pairedAttribute = item;
                     for (const key in pairedAttribute) {
-                        element.setAttribute(
-                            key,
-                            pairedAttribute[key].toString()
-                        );
+                        element.setAttribute(key, pairedAttribute[key].toString());
                     }
-                } else if (typeof item === "object") {
+                }
+                else if (typeof item === "object") {
                     item.map((item) => {
                         element.setAttribute(item, "");
                     });
-                } else {
+                }
+                else {
                     element.setAttribute(item, "");
                 }
             });

@@ -136,7 +136,9 @@ interface elements {
 
 class json2html {
     list: ValidPair[] = [];
-    constructor(readonly root: HTMLElement) {}
+    constructor(readonly root: HTMLElement) {
+        root.innerHTML = "";
+    }
 
     append(input: ValidPair): this {
         this.list.push(input);
@@ -183,10 +185,10 @@ const j2h = {
     element: <Tag extends keyof elements>(
         tagName: Tag,
         attributes: Attributes = {},
-        innerHTMl: ValidValue = ""
+        innerHTML: ValidValue = ""
     ): ValidPair => {
         return {
-            [tagName]: [attributes, innerHTMl],
+            [tagName]: [attributes, innerHTML],
         };
     },
 
