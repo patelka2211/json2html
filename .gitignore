@@ -1,3 +1,12 @@
-.ds_store
-**/.ds_store
+# macOS .DS_Store file
+**/.DS_Store
+
+# Development dependencies
+config.rollup.sh
+config.terser.sh
+config.typescript.sh
+rollup.config.mjs
+tsconfig.json
+
+# VSCode settings
 .vscode

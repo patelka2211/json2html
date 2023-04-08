@@ -1,4 +1,16 @@
-export default function j2h(tag, attributes) {
+/**
+* "J2H by KP"
+* - JSON2HTML, also known as j2h, is a TypeScript and JavaScript library that used to produce UI components for HTML using JavaScript.
+*
+* @author Kartavya Patel <patelka2211@gmail.com>
+*
+* @license {@link https://github.com/patelka2211/json2html/blob/main/LICENSE MIT}
+*
+* @copyright Kartavya Patel 2023
+*
+* Last updated at : 2023-04-08T16:51:14.137Z
+*/
+function j2h(tag, attributes) {
     if (typeof attributes === "object" && attributes.length !== undefined)
         return `<${tag}></${tag}>`;
     let output = `<${tag}`, children;
@@ -34,3 +46,5 @@ export default function j2h(tag, attributes) {
     output += `</${tag}>`;
     return output;
 }
+
+export { j2h as default };
