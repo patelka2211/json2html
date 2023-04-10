@@ -15,14 +15,22 @@ declare function tag(tag: string, attributes?: attributes): tag;
  * j2hRoot provides functionalities for a j2h root element.
  */
 declare class j2hRoot {
-    private readonly root;
+    readonly root: HTMLElement;
     private structure;
+    private singletonTagCache;
     constructor(root: HTMLElement);
     /**
      * Returns structure of j2h root element. Its like virtual DOM.
      * @returns
      */
-    getStructure(): tag[];
+    getStructure(): tag | tag[] | undefined;
+    /**
+     * Determines whether an HTML tag is a singleton tag.
+     * @function
+     * @param {string} tagName - The name of the HTML tag to check.
+     * @returns {boolean} - `true` if the tag is a singleton tag, otherwise `false`.
+     */
+    isSingletonTag(tagName: string): boolean;
     /**
      * You can add multiple tags using addTag method.
      * @param tag
@@ -30,17 +38,23 @@ declare class j2hRoot {
      */
     addTag(tag: tag): this;
     /**
-     * Renders and renturns default structure of j2h root element.
+     * Converts single tag to HTML string.
+     * @param tag
+     * @returns
+     */
+    private convertSingleTag;
+    /**
+     * Converts multiple tags to HTML string.
      * @param tagList
      * @returns
      */
-    private _render;
+    private convertMultipleTag;
     /**
      * Renders HTML on the actual DOM.
      * @param onSuccess
      * @param onFailure
      */
-    render(onSuccess?: (html: string) => void, onFailure?: (msg: string) => void): Promise<void>;
+    render(onSuccess?: (html: string) => void, onFailure?: () => void): Promise<void>;
 }
 /**
  * Returns j2hRoot instance.

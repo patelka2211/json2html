@@ -8,7 +8,7 @@
 *
 * @copyright Kartavya Patel 2023
 *
-* Last updated at : 2023-04-09T19:12:24.135Z
+* Last updated at : 2023-04-10T16:14:08.551Z
 */
 var j2h = (function (exports) {
     'use strict';
@@ -55,7 +55,7 @@ var j2h = (function (exports) {
     class j2hRoot {
         constructor(root) {
             this.root = root;
-            this.structure = [];
+            this.singletonTagCache = null;
         }
         /**
          * Returns structure of j2h root element. Its like virtual DOM.
@@ -65,65 +65,101 @@ var j2h = (function (exports) {
             return this.structure;
         }
         /**
+         * Determines whether an HTML tag is a singleton tag.
+         * @function
+         * @param {string} tagName - The name of the HTML tag to check.
+         * @returns {boolean} - `true` if the tag is a singleton tag, otherwise `false`.
+         */
+        isSingletonTag(tagName) {
+            if (this.singletonTagCache !== null &&
+                this.singletonTagCache.hasOwnProperty(tagName)) {
+                return this.singletonTagCache[tagName];
+            }
+            else {
+                let el = document.createElement(tagName), isSingleton = el.outerHTML.indexOf(`</${tagName}>`) === -1;
+                if (this.singletonTagCache === null)
+                    this.singletonTagCache = {};
+                this.singletonTagCache[tagName] = isSingleton;
+                return isSingleton;
+            }
+        }
+        /**
          * You can add multiple tags using addTag method.
          * @param tag
          * @returns
          */
         addTag(tag) {
-            this.structure.push(tag);
+            if (this.structure === undefined)
+                this.structure = tag;
+            else if (this.structure.length === undefined)
+                this.structure = [this.structure, tag];
+            else
+                this.structure.push(tag);
             return this;
         }
         /**
-         * Renders and renturns default structure of j2h root element.
-         * @param tagList
+         * Converts single tag to HTML string.
+         * @param tag
          * @returns
          */
-        _render(tagList = this.structure) {
-            let output = "";
-            tagList.forEach((tagObject) => {
-                try {
-                    let tagName = Object.keys(tagObject)[0], attributesObject = tagObject[tagName], children;
-                    output += `<${tagName}`;
-                    for (const attributeName in attributesObject) {
-                        if (Object.prototype.hasOwnProperty.call(attributesObject, attributeName)) {
-                            const attributeValue = attributesObject[attributeName];
-                            if (attributeName === "children") {
-                                if (children === undefined &&
-                                    (typeof attributeValue === "object" ||
-                                        typeof attributeValue === "string"))
-                                    children = attributeValue;
-                            }
-                            else {
-                                if (["string", "boolean", "number"].indexOf(typeof attributeValue) !== -1) {
-                                    if (typeof attributeValue === "boolean" &&
-                                        attributeValue)
-                                        output += ` ${attributeName}`;
-                                    else
-                                        output += ` ${attributeName}="${attributeValue}"`;
-                                }
+        convertSingleTag(tag) {
+            try {
+                let tagName = Object.keys(tag)[0], attributesObject = tag[tagName], isSingleton = this.isSingletonTag(tagName), children = null, output = `<${tagName}`;
+                for (const attributeName in attributesObject) {
+                    if (Object.prototype.hasOwnProperty.call(attributesObject, attributeName)) {
+                        const attributeValue = attributesObject[attributeName];
+                        if (attributeName === "children") {
+                            if (children === null &&
+                                (typeof attributeValue === "object" ||
+                                    typeof attributeValue === "string"))
+                                children = attributeValue;
+                        }
+                        else {
+                            if (["string", "boolean", "number"].indexOf(typeof attributeValue) !== -1) {
+                                if (typeof attributeValue === "boolean" &&
+                                    attributeValue)
+                                    output += ` ${attributeName}`;
+                                else
+                                    output += ` ${attributeName}="${attributeValue}"`;
                             }
                         }
                     }
-                    output += `>`;
-                    if (children !== undefined) {
+                }
+                if (isSingleton) {
+                    output += "/>";
+                    children = null;
+                }
+                else {
+                    output += ">";
+                    if (children !== null) {
                         if (typeof children === "string")
                             output += children;
                         else if (children.length === undefined)
-                            output += this._render([children]);
-                        else if (children.length !== undefined) {
-                            children.forEach((child) => {
-                                if (typeof child === "string")
-                                    output += child;
-                                else
-                                    output += this._render([child]);
-                            });
-                        }
+                            output += this.convertSingleTag(children);
+                        else if (children.length !== undefined)
+                            output += this.convertMultipleTag(children);
                     }
                     output += `</${tagName}>`;
                 }
-                catch (error) {
-                    console.error(error);
-                }
+                return output;
+            }
+            catch (error) {
+                console.error(error);
+                return "";
+            }
+        }
+        /**
+         * Converts multiple tags to HTML string.
+         * @param tagList
+         * @returns
+         */
+        convertMultipleTag(tagList) {
+            let output = "";
+            tagList.forEach((item) => {
+                if (typeof item === "string")
+                    output += `\n${item}`;
+                else
+                    output += `\n${this.convertSingleTag(item)}`;
             });
             return output;
         }
@@ -132,19 +168,26 @@ var j2h = (function (exports) {
          * @param onSuccess
          * @param onFailure
          */
-        render(onSuccess = (html) => {
-            console.log(html);
-        }, onFailure = (msg) => {
-            console.log(msg);
-        }) {
+        render(onSuccess = () => { }, onFailure = () => { }) {
             return __awaiter(this, void 0, void 0, function* () {
                 try {
-                    let html = this._render();
+                    let html = "";
+                    if (this.structure !== undefined) {
+                        if (typeof this.structure === "object" &&
+                            this.structure.length === undefined)
+                            html = this.convertSingleTag(this.structure);
+                        else
+                            html = this.convertMultipleTag(this.structure);
+                    }
                     this.root.innerHTML = html;
-                    onSuccess(html);
+                    onSuccess();
                 }
                 catch (error) {
-                    onFailure(String(error));
+                    console.error(error);
+                    onFailure();
+                }
+                finally {
+                    this.singletonTagCache = null;
                 }
             });
         }
