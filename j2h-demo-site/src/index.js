@@ -1,95 +1,94 @@
-import j2h from "../../dist/j2h.js";
+import { setJ2HRoot, tag } from "../../dist/j2h.js";
 import formatHTML from "./formatHTML.js";
 
-let root = j2h.setRoot(document.getElementById("root"));
+let root = setJ2HRoot(document.getElementById("root"));
 
-root.append(
-    j2h.element("img", {
+root.addTag(
+    tag("img", {
         id: "j2h-logo",
         src: "./j2h-demo-site/assets/j2h-logo.png",
     })
 )
-    .append(
-        j2h.element(
-            "p",
-            { id: "j2h-description" },
-            "JSON2HTML, also known as j2h, is a TypeScript and JavaScript library that used to produce UI components for HTML using JavaScript."
-        )
+    .addTag(
+        tag("p", {
+            id: "j2h-description",
+            children:
+                "JSON2HTML, also known as j2h, is a TypeScript and JavaScript library that used to produce UI components for HTML using JavaScript.",
+        })
     )
-    .append(
-        j2h.element(
-            "p",
-            {},
-            "This website was developed using j2h. An example of its own is provided."
-        )
+    .addTag(
+        tag("p", {
+            children:
+                "This website was developed using j2h. An example of its own is provided.",
+        })
     )
-    .append(
-        j2h.element(
-            "p",
-            { id: "for-large-screens" },
-            "The left example demonstrates how the j2h generates json. The HTML result is seen in the right example."
-        )
+    .addTag(
+        tag("p", {
+            id: "for-large-screens",
+            children:
+                "The left example demonstrates how the j2h generates json. The HTML result is seen in the right example.",
+        })
     )
-    .append(
-        j2h.element(
-            "p",
-            { id: "for-small-screens" },
-            "The upper example demonstrates how the j2h generates json. The HTML result is seen in the lower example."
-        )
+    .addTag(
+        tag("p", {
+            id: "for-small-screens",
+            children:
+                "The upper example demonstrates how the j2h generates json. The HTML result is seen in the lower example.",
+        })
     )
-    .append(
-        j2h.element(
-            "a",
-            {
-                href: "https://github.com/patelka2211/json2html",
-                target: "_blank",
-            },
-            "View j2h on GitHub"
-        )
+    .addTag(
+        tag("a", {
+            href: "https://github.com/patelka2211/json2html",
+            target: "_blank",
+            children: "View j2h on GitHub",
+        })
     )
-    .append(
-        j2h.element("div", { id: "example-container" }, [
-            j2h.element("div", { id: "json-input-container" }),
-            j2h.element("div", { id: "html-output-container" }),
-        ])
+    .addTag(
+        tag("div", {
+            id: "example-container",
+            children: [
+                tag("div", { id: "json-input-container" }),
+                tag("div", { id: "html-output-container" }),
+            ],
+        })
     )
-    .append(
-        j2h.element(
-            "a",
-            {
-                href: "https://github.com/patelka2211",
-                target: "_blank",
-            },
-            "Developed in 🇮🇳 with ❤️ by KP"
-        )
+    .addTag(
+        tag("a", {
+            href: "https://github.com/patelka2211",
+            target: "_blank",
+            children: "Developed in 🇮🇳 with ❤️ by KP",
+        })
     );
 
-async function render() {
-    root.render();
-}
+root.render((html) => {
+    root.root.innerHTML = html;
 
-render().then(() => {
-    let html_input_container = j2h.setRoot(
-        document.getElementById("html-output-container")
-    );
+    let html_input_container = document.getElementById("html-output-container");
 
     ((list) => {
+        html_input_container.innerHTML = "";
+
         list.map((item) => {
-            html_input_container.append(j2h.element("pre", {}, item));
+            html_input_container.append(
+                ((element) => {
+                    element.innerText = item;
+                    return element;
+                })(document.createElement("pre"))
+            );
         });
+    })(formatHTML(html).split("\n"));
 
-        html_input_container.render();
-    })(formatHTML(root.root.innerHTML).split("\n"));
-
-    let json_input_container = j2h.setRoot(
-        document.getElementById("json-input-container")
-    );
+    let json_input_container = document.getElementById("json-input-container");
 
     ((list) => {
+        json_input_container.innerHTML = "";
         list.map((item) => {
-            json_input_container.append(j2h.element("pre", {}, item));
+            json_input_container.append(
+                ((element) => {
+                    element.innerText = item;
+                    return element;
+                })(document.createElement("pre"))
+            );
         });
-
-        json_input_container.render();
-    })(JSON.stringify(root.list, null, 3).split("\n"));
+    })(JSON.stringify(root.getStructure(), null, 3).split("\n"));
 });

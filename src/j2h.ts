@@ -1,260 +1,225 @@
-/**
- * Copyright (c) 2023 Kartavya Patel
- * Repository url: https://github.com/patelka2211/json2html
- */
-type BooleanAttributeName = string;
-type PairedAttribute = {
-    [_: string]: string | number;
-};
-type CompositeAttribute = [
-    PairedAttribute,
-    BooleanAttributeName | BooleanAttributeName[]
-];
-type Attributes =
-    | BooleanAttributeName
-    | BooleanAttributeName[]
-    | CompositeAttribute
-    | PairedAttribute;
-type ValidValue = string | ValidPair | ValidPair[];
-type ValidPair = {
-    [_: string]: [Attributes, ValidValue];
+type tag = {
+    [name: string]: attributes;
 };
 
-interface elements {
-    a: "a";
-    abbr: "abbr";
-    address: "address";
-    area: "area";
-    article: "article";
-    aside: "aside";
-    audio: "audio";
-    b: "b";
-    base: "base";
-    bdi: "bdi";
-    bdo: "bdo";
-    blockquote: "blockquote";
-    body: "body";
-    br: "br";
-    button: "button";
-    canvas: "canvas";
-    caption: "caption";
-    cite: "cite";
-    code: "code";
-    col: "col";
-    colgroup: "colgroup";
-    data: "data";
-    datalist: "datalist";
-    dd: "dd";
-    del: "del";
-    details: "details";
-    dfn: "dfn";
-    dialog: "dialog";
-    div: "div";
-    dl: "dl";
-    dt: "dt";
-    em: "em";
-    embed: "embed";
-    fieldset: "fieldset";
-    figcaption: "figcaption";
-    figure: "figure";
-    footer: "footer";
-    form: "form";
-    h1: "h1";
-    h2: "h2";
-    h3: "h3";
-    h4: "h4";
-    h5: "h5";
-    h6: "h6";
-    head: "head";
-    header: "header";
-    hgroup: "hgroup";
-    hr: "hr";
-    html: "html";
-    i: "i";
-    iframe: "iframe";
-    img: "img";
-    input: "input";
-    ins: "ins";
-    kbd: "kbd";
-    label: "label";
-    legend: "legend";
-    li: "li";
-    link: "link";
-    main: "main";
-    map: "map";
-    mark: "mark";
-    menu: "menu";
-    meta: "meta";
-    meter: "meter";
-    nav: "nav";
-    noscript: "noscript";
-    object: "object";
-    ol: "ol";
-    optgroup: "optgroup";
-    option: "option";
-    output: "output";
-    p: "p";
-    picture: "picture";
-    pre: "pre";
-    progress: "progress";
-    q: "q";
-    rp: "rp";
-    rt: "rt";
-    ruby: "ruby";
-    s: "s";
-    samp: "samp";
-    script: "script";
-    section: "section";
-    select: "select";
-    slot: "slot";
-    small: "small";
-    source: "source";
-    span: "span";
-    strong: "strong";
-    style: "style";
-    sub: "sub";
-    summary: "summary";
-    sup: "sup";
-    table: "table";
-    tbody: "tbody";
-    td: "td";
-    template: "template";
-    textarea: "textarea";
-    tfoot: "tfoot";
-    th: "th";
-    thead: "thead";
-    time: "time";
-    title: "title";
-    tr: "tr";
-    track: "track";
-    u: "u";
-    ul: "ul";
-    var: "var";
-    video: "video";
-    wbr: "wbr";
+type attributes = {
+    [key: string]: string | true | number | tag | (string | tag)[];
+};
+
+/**
+ * Returns JSON object of tag and its attributes
+ * @param tag
+ * @param attributes
+ * @returns
+ */
+
+function tag(tag: string, attributes: attributes = {}): tag {
+    for (const attributeName in attributes) {
+        if (Object.prototype.hasOwnProperty.call(attributes, attributeName)) {
+            const attributeValue = attributes[attributeName];
+
+            if (attributeName === "children") {
+                if (
+                    typeof attributeValue !== "object" &&
+                    typeof attributeValue !== "string"
+                ) {
+                    delete attributes[attributeName];
+                }
+            } else {
+                if (
+                    ["string", "boolean", "number"].indexOf(
+                        typeof attributeValue
+                    ) === -1
+                ) {
+                    delete attributes[attributeName];
+                }
+            }
+        }
+    }
+
+    return {
+        [tag]: attributes,
+    };
 }
 
-class json2html {
-    list: ValidPair[] = [];
+/**
+ * j2hRoot provides functionalities for a j2h root element.
+ */
+class j2hRoot {
+    private structure: tag | tag[] | undefined;
+    private singletonTagCache: {
+        [tag: string]: boolean;
+    } | null = null;
     constructor(readonly root: HTMLElement) {}
 
-    append(input: ValidPair): this {
-        this.list.push(input);
+    /**
+     * Returns structure of j2h root element. Its like virtual DOM.
+     * @returns
+     */
+    public getStructure() {
+        return this.structure;
+    }
+
+    /**
+     * Determines whether an HTML tag is a singleton tag.
+     * @function
+     * @param {string} tagName - The name of the HTML tag to check.
+     * @returns {boolean} - `true` if the tag is a singleton tag, otherwise `false`.
+     */
+    isSingletonTag(tagName: string): boolean {
+        if (
+            this.singletonTagCache !== null &&
+            this.singletonTagCache.hasOwnProperty(tagName)
+        ) {
+            return this.singletonTagCache[tagName];
+        } else {
+            let el = document.createElement(tagName),
+                isSingleton = el.outerHTML.indexOf(`</${tagName}>`) === -1;
+
+            if (this.singletonTagCache === null) this.singletonTagCache = {};
+            this.singletonTagCache[tagName] = isSingleton;
+            return isSingleton;
+        }
+    }
+
+    /**
+     * You can add multiple tags using addTag method.
+     * @param tag
+     * @returns
+     */
+    public addTag(tag: tag) {
+        if (this.structure === undefined) this.structure = tag;
+        else if (this.structure.length === undefined)
+            this.structure = [this.structure as tag, tag];
+        else (this.structure as tag[]).push(tag);
+
         return this;
     }
-    render(
-        input: ValidPair[] = this.list,
-        root: HTMLElement = this.root,
-        clearRoot: boolean = true
-    ): void {
-        if (clearRoot) root.innerHTML = "";
-        input.forEach((item) => {
-            for (const key in item) {
-                if (Object.prototype.hasOwnProperty.call(item, key)) {
-                    const element = document.createElement(key);
-                    const value = item[key];
 
-                    j2h.setAttribute(element, value[0]);
+    /**
+     * Converts single tag to HTML string.
+     * @param tag
+     * @returns
+     */
+    private convertSingleTag(tag: tag) {
+        try {
+            let tagName = Object.keys(tag)[0],
+                attributesObject = tag[tagName],
+                isSingleton = this.isSingletonTag(tagName),
+                children: string | tag | (string | tag)[] | null = null,
+                output = `<${tagName}`;
 
-                    if (typeof value[1] == "string") {
-                        element.innerText = value[1];
-                    } else if (
-                        typeof (value[1] as ValidPair | ValidPair[]) == "object"
-                    ) {
-                        if ((value[1] as ValidPair).length === undefined) {
-                            this.render(
-                                [value[1] as ValidPair],
-                                element,
-                                false
-                            );
-                        } else if (
-                            (value[1] as ValidPair[]).length !== undefined
+            for (const attributeName in attributesObject) {
+                if (
+                    Object.prototype.hasOwnProperty.call(
+                        attributesObject,
+                        attributeName
+                    )
+                ) {
+                    const attributeValue = attributesObject[attributeName];
+
+                    if (attributeName === "children") {
+                        if (
+                            children === null &&
+                            (typeof attributeValue === "object" ||
+                                typeof attributeValue === "string")
+                        )
+                            children = attributeValue;
+                    } else {
+                        if (
+                            ["string", "boolean", "number"].indexOf(
+                                typeof attributeValue
+                            ) !== -1
                         ) {
-                            this.render(
-                                value[1] as ValidPair[],
-                                element,
-                                false
-                            );
+                            if (
+                                typeof attributeValue === "boolean" &&
+                                attributeValue
+                            )
+                                output += ` ${attributeName}`;
+                            else
+                                output += ` ${attributeName}="${attributeValue}"`;
                         }
                     }
-
-                    root.appendChild(element);
                 }
             }
+
+            if (isSingleton) {
+                output += "/>";
+                children = null;
+            } else {
+                output += ">";
+                if (children !== null) {
+                    if (typeof children === "string") output += children;
+                    else if (children.length === undefined)
+                        output += this.convertSingleTag(children as tag);
+                    else if (children.length !== undefined)
+                        output += this.convertMultipleTag(
+                            children as (string | tag)[]
+                        );
+                }
+                output += `</${tagName}>`;
+            }
+
+            return output;
+        } catch (error) {
+            console.error(error);
+            return "";
+        }
+    }
+
+    /**
+     * Converts multiple tags to HTML string.
+     * @param tagList
+     * @returns
+     */
+    private convertMultipleTag(tagList: (string | tag)[]) {
+        let output = "";
+        tagList.forEach((item) => {
+            if (typeof item === "string") output += `\n${item}`;
+            else output += `\n${this.convertSingleTag(item)}`;
         });
+        return output;
+    }
+
+    /**
+     * Renders HTML on the actual DOM.
+     * @param onSuccess
+     * @param onFailure
+     */
+    public async render(
+        onSuccess = (html: string) => {
+            this.root.innerHTML = html;
+        },
+        onFailure = () => {}
+    ) {
+        try {
+            let html = "";
+
+            if (this.structure !== undefined) {
+                if (
+                    typeof this.structure === "object" &&
+                    this.structure.length === undefined
+                )
+                    html = this.convertSingleTag(this.structure as tag);
+                else html = this.convertMultipleTag(this.structure as tag[]);
+            }
+            onSuccess(html);
+        } catch (error) {
+            console.error(error);
+            onFailure();
+        } finally {
+            this.singletonTagCache = null;
+        }
     }
 }
 
-const j2h = {
-    setRoot: (root: HTMLElement) => {
-        return new json2html(root);
-    },
+/**
+ * Returns j2hRoot instance.
+ * @param element
+ * @returns
+ */
+function setJ2HRoot(element: HTMLElement) {
+    return new j2hRoot(element);
+}
 
-    element: <Tag extends keyof elements>(
-        tagName: Tag,
-        attributes: Attributes = {},
-        innerHTML: ValidValue = ""
-    ): ValidPair => {
-        return {
-            [tagName]: [attributes, innerHTML],
-        };
-    },
-
-    setAttribute: (
-        element: HTMLElement | json2html,
-        attributes: Attributes
-    ): HTMLElement => {
-        if (element instanceof json2html) {
-            element = element.root;
-        }
-
-        if (typeof attributes === "string") {
-            element.setAttribute(attributes as string, "");
-        } else if (
-            typeof attributes === "object" &&
-            attributes.length !== undefined &&
-            typeof (attributes as string[])[0] === "string"
-        ) {
-            for (
-                let index = 0;
-                index < (attributes as string[]).length;
-                index++
-            ) {
-                const item = (attributes as string[])[index];
-                element.setAttribute(item, "");
-            }
-        } else if ((attributes as PairedAttribute).length === undefined) {
-            for (const key in attributes as
-                | CompositeAttribute
-                | PairedAttribute) {
-                element.setAttribute(
-                    key,
-                    (attributes as PairedAttribute)[key].toString()
-                );
-            }
-        } else {
-            (attributes as CompositeAttribute).map((item) => {
-                if ((item as PairedAttribute).length === undefined) {
-                    let pairedAttribute: PairedAttribute =
-                        item as PairedAttribute;
-                    for (const key in pairedAttribute) {
-                        (element as HTMLElement).setAttribute(
-                            key,
-                            pairedAttribute[key].toString()
-                        );
-                    }
-                } else if (typeof item === "object") {
-                    (item as BooleanAttributeName[]).map((item) => {
-                        (element as HTMLElement).setAttribute(item, "");
-                    });
-                } else {
-                    (element as HTMLElement).setAttribute(item, "");
-                }
-            });
-        }
-
-        return element;
-    },
-};
-
-export default j2h;
+export { tag, setJ2HRoot };

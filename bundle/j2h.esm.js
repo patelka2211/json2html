@@ -1,4 +1,16 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+/**
+* "J2H by KP"
+* - JSON2HTML, also known as j2h, is a TypeScript and JavaScript library that used to produce UI components for HTML using JavaScript.
+*
+* @author Kartavya Patel <patelka2211@gmail.com>
+*
+* @license {@link https://github.com/patelka2211/json2html/blob/main/LICENSE MIT}
+*
+* @copyright Kartavya Patel 2023
+*
+* Last updated at : 2023-04-10T16:14:08.551Z
+*/
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -153,9 +165,7 @@ class j2hRoot {
      * @param onSuccess
      * @param onFailure
      */
-    render(onSuccess = (html) => {
-        this.root.innerHTML = html;
-    }, onFailure = () => { }) {
+    render(onSuccess = () => { }, onFailure = () => { }) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let html = "";
@@ -166,7 +176,8 @@ class j2hRoot {
                     else
                         html = this.convertMultipleTag(this.structure);
                 }
-                onSuccess(html);
+                this.root.innerHTML = html;
+                onSuccess();
             }
             catch (error) {
                 console.error(error);
@@ -186,4 +197,5 @@ class j2hRoot {
 function setJ2HRoot(element) {
     return new j2hRoot(element);
 }
-export { tag, setJ2HRoot };
+
+export { setJ2HRoot, tag };
