@@ -8,7 +8,7 @@
 *
 * @copyright Kartavya Patel 2023
 *
-* Last updated at : 2023-04-10T16:14:08.551Z
+* Last updated at : 2023-04-11T04:20:07.894Z
 */
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -154,9 +154,9 @@ class j2hRoot {
         let output = "";
         tagList.forEach((item) => {
             if (typeof item === "string")
-                output += `\n${item}`;
+                output += `\n${item}\n`;
             else
-                output += `\n${this.convertSingleTag(item)}`;
+                output += `\n${this.convertSingleTag(item)}\n`;
         });
         return output;
     }
@@ -165,7 +165,9 @@ class j2hRoot {
      * @param onSuccess
      * @param onFailure
      */
-    render(onSuccess = () => { }, onFailure = () => { }) {
+    render(onSuccess = (html) => {
+        this.root.innerHTML = html;
+    }, onFailure = () => { }) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let html = "";
@@ -176,8 +178,7 @@ class j2hRoot {
                     else
                         html = this.convertMultipleTag(this.structure);
                 }
-                this.root.innerHTML = html;
-                onSuccess();
+                onSuccess(html);
             }
             catch (error) {
                 console.error(error);

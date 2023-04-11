@@ -142,9 +142,9 @@ class j2hRoot {
         let output = "";
         tagList.forEach((item) => {
             if (typeof item === "string")
-                output += `\n${item}`;
+                output += `\n${item}\n`;
             else
-                output += `\n${this.convertSingleTag(item)}`;
+                output += `\n${this.convertSingleTag(item)}\n`;
         });
         return output;
     }

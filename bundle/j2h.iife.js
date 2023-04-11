@@ -8,7 +8,7 @@
 *
 * @copyright Kartavya Patel 2023
 *
-* Last updated at : 2023-04-10T16:14:08.551Z
+* Last updated at : 2023-04-11T04:20:07.894Z
 */
 var j2h = (function (exports) {
     'use strict';
@@ -157,9 +157,9 @@ var j2h = (function (exports) {
             let output = "";
             tagList.forEach((item) => {
                 if (typeof item === "string")
-                    output += `\n${item}`;
+                    output += `\n${item}\n`;
                 else
-                    output += `\n${this.convertSingleTag(item)}`;
+                    output += `\n${this.convertSingleTag(item)}\n`;
             });
             return output;
         }
@@ -168,7 +168,9 @@ var j2h = (function (exports) {
          * @param onSuccess
          * @param onFailure
          */
-        render(onSuccess = () => { }, onFailure = () => { }) {
+        render(onSuccess = (html) => {
+            this.root.innerHTML = html;
+        }, onFailure = () => { }) {
             return __awaiter(this, void 0, void 0, function* () {
                 try {
                     let html = "";
@@ -179,8 +181,7 @@ var j2h = (function (exports) {
                         else
                             html = this.convertMultipleTag(this.structure);
                     }
-                    this.root.innerHTML = html;
-                    onSuccess();
+                    onSuccess(html);
                 }
                 catch (error) {
                     console.error(error);

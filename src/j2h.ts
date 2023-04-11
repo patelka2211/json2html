@@ -175,8 +175,8 @@ class j2hRoot {
     private convertMultipleTag(tagList: (string | tag)[]) {
         let output = "";
         tagList.forEach((item) => {
-            if (typeof item === "string") output += `\n${item}`;
-            else output += `\n${this.convertSingleTag(item)}`;
+            if (typeof item === "string") output += `\n${item}\n`;
+            else output += `\n${this.convertSingleTag(item)}\n`;
         });
         return output;
     }
