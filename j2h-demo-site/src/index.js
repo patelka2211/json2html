@@ -69,12 +69,13 @@ root.render((html) => {
         html_input_container.innerHTML = "";
 
         list.map((item) => {
-            html_input_container.append(
-                ((element) => {
-                    element.innerText = item;
-                    return element;
-                })(document.createElement("pre"))
-            );
+            if (item.length)
+                html_input_container.append(
+                    ((element) => {
+                        element.innerText = item;
+                        return element;
+                    })(document.createElement("pre"))
+                );
         });
     })(formatHTML(html).split("\n"));
 
@@ -83,12 +84,13 @@ root.render((html) => {
     ((list) => {
         json_input_container.innerHTML = "";
         list.map((item) => {
-            json_input_container.append(
-                ((element) => {
-                    element.innerText = item;
-                    return element;
-                })(document.createElement("pre"))
-            );
+            if (item.length)
+                json_input_container.append(
+                    ((element) => {
+                        element.innerText = item;
+                        return element;
+                    })(document.createElement("pre"))
+                );
         });
     })(JSON.stringify(root.getStructure(), null, 3).split("\n"));
 });
