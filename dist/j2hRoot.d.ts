@@ -1,29 +1,17 @@
-type tag = {
-    [name: string]: attributes;
-};
-type attributes = {
-    [key: string]: string | true | number | tag | (string | tag)[];
-};
-/**
- * Returns JSON object of tag and its attributes
- * @param tag
- * @param attributes
- * @returns
- */
-declare function tag(tag: string, attributes?: attributes): tag;
+import { tag } from "./tagGenerator";
 /**
  * j2hRoot provides functionalities for a j2h root element.
  */
 declare class j2hRoot {
-    readonly root: HTMLElement;
+    readonly root: HTMLElement | null;
     private structure;
     private singletonTagCache;
-    constructor(root: HTMLElement);
+    constructor(root?: HTMLElement | null);
     /**
      * Returns structure of j2h root element. Its like virtual DOM.
      * @returns
      */
-    getStructure(): tag | tag[] | undefined;
+    getStructure(): tag | tag[];
     /**
      * Determines whether an HTML tag is a singleton tag.
      * @function
@@ -61,5 +49,5 @@ declare class j2hRoot {
  * @param element
  * @returns
  */
-declare function setJ2HRoot(element: HTMLElement): j2hRoot;
-export { tag, setJ2HRoot };
+export declare function setJ2HRoot(element: HTMLElement): j2hRoot;
+export {};

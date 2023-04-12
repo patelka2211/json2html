@@ -1,4 +1,4 @@
-import { setJ2HRoot, tag } from "../../dist/j2h.js";
+import { setJ2HRoot, tag } from "../../dist/index.js";
 import formatHTML from "./formatHTML.js";
 
 let root = setJ2HRoot(document.getElementById("root"));

@@ -8,37 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * Returns JSON object of tag and its attributes
- * @param tag
- * @param attributes
- * @returns
- */
-function tag(tag, attributes = {}) {
-    for (const attributeName in attributes) {
-        if (Object.prototype.hasOwnProperty.call(attributes, attributeName)) {
-            const attributeValue = attributes[attributeName];
-            if (attributeName === "children") {
-                if (typeof attributeValue !== "object" &&
-                    typeof attributeValue !== "string") {
-                    delete attributes[attributeName];
-                }
-            }
-            else {
-                if (["string", "boolean", "number"].indexOf(typeof attributeValue) === -1) {
-                    delete attributes[attributeName];
-                }
-            }
-        }
-    }
-    return {
-        [tag]: attributes,
-    };
-}
-/**
  * j2hRoot provides functionalities for a j2h root element.
  */
 class j2hRoot {
-    constructor(root) {
+    constructor(root = null) {
         this.root = root;
         this.singletonTagCache = null;
     }
@@ -47,6 +20,8 @@ class j2hRoot {
      * @returns
      */
     getStructure() {
+        if (this.structure === undefined)
+            return {};
         return this.structure;
     }
     /**
@@ -154,9 +129,12 @@ class j2hRoot {
      * @param onFailure
      */
     render(onSuccess = (html) => {
-        this.root.innerHTML = html;
+        if (this.root !== null)
+            this.root.innerHTML = html;
     }, onFailure = () => { }) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.root === null)
+                return;
             try {
                 let html = "";
                 if (this.structure !== undefined) {
@@ -183,7 +161,6 @@ class j2hRoot {
  * @param element
  * @returns
  */
-function setJ2HRoot(element) {
+export function setJ2HRoot(element) {
     return new j2hRoot(element);
 }
-export { tag, setJ2HRoot };

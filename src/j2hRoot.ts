@@ -1,46 +1,4 @@
-type tag = {
-    [name: string]: attributes;
-};
-
-type attributes = {
-    [key: string]: string | true | number | tag | (string | tag)[];
-};
-
-/**
- * Returns JSON object of tag and its attributes
- * @param tag
- * @param attributes
- * @returns
- */
-
-function tag(tag: string, attributes: attributes = {}): tag {
-    for (const attributeName in attributes) {
-        if (Object.prototype.hasOwnProperty.call(attributes, attributeName)) {
-            const attributeValue = attributes[attributeName];
-
-            if (attributeName === "children") {
-                if (
-                    typeof attributeValue !== "object" &&
-                    typeof attributeValue !== "string"
-                ) {
-                    delete attributes[attributeName];
-                }
-            } else {
-                if (
-                    ["string", "boolean", "number"].indexOf(
-                        typeof attributeValue
-                    ) === -1
-                ) {
-                    delete attributes[attributeName];
-                }
-            }
-        }
-    }
-
-    return {
-        [tag]: attributes,
-    };
-}
+import { tag } from "./tagGenerator";
 
 /**
  * j2hRoot provides functionalities for a j2h root element.
@@ -50,13 +8,14 @@ class j2hRoot {
     private singletonTagCache: {
         [tag: string]: boolean;
     } | null = null;
-    constructor(readonly root: HTMLElement) {}
+    constructor(readonly root: HTMLElement | null = null) {}
 
     /**
      * Returns structure of j2h root element. Its like virtual DOM.
      * @returns
      */
     public getStructure() {
+        if (this.structure === undefined) return {} as tag;
         return this.structure;
     }
 
@@ -188,10 +147,11 @@ class j2hRoot {
      */
     public async render(
         onSuccess = (html: string) => {
-            this.root.innerHTML = html;
+            if (this.root !== null) this.root.innerHTML = html;
         },
         onFailure = () => {}
     ) {
+        if (this.root === null) return;
         try {
             let html = "";
 
@@ -218,8 +178,6 @@ class j2hRoot {
  * @param element
  * @returns
  */
-function setJ2HRoot(element: HTMLElement) {
+export function setJ2HRoot(element: HTMLElement) {
     return new j2hRoot(element);
 }
-
-export { tag, setJ2HRoot };

@@ -8,7 +8,7 @@
 *
 * @copyright Kartavya Patel 2023
 *
-* Last updated at : 2023-04-11T04:20:07.894Z
+* Last updated at : 2023-04-12T06:08:52.367Z
 */
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -20,37 +20,10 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
     });
 };
 /**
- * Returns JSON object of tag and its attributes
- * @param tag
- * @param attributes
- * @returns
- */
-function tag(tag, attributes = {}) {
-    for (const attributeName in attributes) {
-        if (Object.prototype.hasOwnProperty.call(attributes, attributeName)) {
-            const attributeValue = attributes[attributeName];
-            if (attributeName === "children") {
-                if (typeof attributeValue !== "object" &&
-                    typeof attributeValue !== "string") {
-                    delete attributes[attributeName];
-                }
-            }
-            else {
-                if (["string", "boolean", "number"].indexOf(typeof attributeValue) === -1) {
-                    delete attributes[attributeName];
-                }
-            }
-        }
-    }
-    return {
-        [tag]: attributes,
-    };
-}
-/**
  * j2hRoot provides functionalities for a j2h root element.
  */
 class j2hRoot {
-    constructor(root) {
+    constructor(root = null) {
         this.root = root;
         this.singletonTagCache = null;
     }
@@ -59,6 +32,8 @@ class j2hRoot {
      * @returns
      */
     getStructure() {
+        if (this.structure === undefined)
+            return {};
         return this.structure;
     }
     /**
@@ -166,9 +141,12 @@ class j2hRoot {
      * @param onFailure
      */
     render(onSuccess = (html) => {
-        this.root.innerHTML = html;
+        if (this.root !== null)
+            this.root.innerHTML = html;
     }, onFailure = () => { }) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.root === null)
+                return;
             try {
                 let html = "";
                 if (this.structure !== undefined) {
@@ -199,4 +177,32 @@ function setJ2HRoot(element) {
     return new j2hRoot(element);
 }
 
-export { setJ2HRoot, tag };
+/**
+ * Returns JSON object of tag and its attributes
+ * @param tag
+ * @param attributes
+ * @returns
+ */
+function tagGenerator(tag, attributes = {}) {
+    for (const attributeName in attributes) {
+        if (Object.prototype.hasOwnProperty.call(attributes, attributeName)) {
+            const attributeValue = attributes[attributeName];
+            if (attributeName === "children") {
+                if (typeof attributeValue !== "object" &&
+                    typeof attributeValue !== "string") {
+                    delete attributes[attributeName];
+                }
+            }
+            else {
+                if (["string", "boolean", "number"].indexOf(typeof attributeValue) === -1) {
+                    delete attributes[attributeName];
+                }
+            }
+        }
+    }
+    return {
+        [tag]: attributes,
+    };
+}
+
+export { setJ2HRoot, tagGenerator as tag };
