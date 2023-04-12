@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * j2hRoot provides functionalities for a j2h root element.
+ * j2hRoot provides functionalities for a J2H root element.
  */
 class j2hRoot {
     constructor(root = null) {
@@ -16,13 +16,21 @@ class j2hRoot {
         this.singletonTagCache = null;
     }
     /**
-     * Returns structure of j2h root element. Its like virtual DOM.
+     * Returns structure of J2H root element.
      * @returns
      */
     getStructure() {
         if (this.structure === undefined)
             return {};
         return this.structure;
+    }
+    /**
+     * Sets structure of J2H root element.
+     * @param structure
+     */
+    setStructure(structure) {
+        if (structure === undefined || typeof structure === "object")
+            this.structure = structure;
     }
     /**
      * Determines whether an HTML tag is a singleton tag.
@@ -64,7 +72,14 @@ class j2hRoot {
      */
     convertSingleTag(tag) {
         try {
-            let tagName = Object.keys(tag)[0], attributesObject = tag[tagName], isSingleton = this.isSingletonTag(tagName), children = null, output = `<${tagName}`;
+            let tagName = Object.keys(tag)[0], attributesObject = tag[tagName], isSingleton = this.isSingletonTag(tagName);
+            if (!(typeof attributesObject === "object" &&
+                attributesObject.length === undefined)) {
+                if (isSingleton)
+                    return `<${tagName}/>`;
+                return `<${tagName}></${tagName}>`;
+            }
+            let children = null, output = `<${tagName}`;
             for (const attributeName in attributesObject) {
                 if (Object.prototype.hasOwnProperty.call(attributesObject, attributeName)) {
                     const attributeValue = attributesObject[attributeName];

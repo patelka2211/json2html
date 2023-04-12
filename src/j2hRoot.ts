@@ -1,9 +1,12 @@
 import { tag } from "./tagGenerator";
 
 /**
- * j2hRoot provides functionalities for a j2h root element.
+ * j2hRoot provides functionalities for a J2H root element.
  */
 class j2hRoot {
+    /**
+     * Structure of innerHTML of root tag. Its like virtual DOM.
+     */
     private structure: tag | tag[] | undefined;
     private singletonTagCache: {
         [tag: string]: boolean;
@@ -11,12 +14,21 @@ class j2hRoot {
     constructor(readonly root: HTMLElement | null = null) {}
 
     /**
-     * Returns structure of j2h root element. Its like virtual DOM.
+     * Returns structure of J2H root element.
      * @returns
      */
     public getStructure() {
         if (this.structure === undefined) return {} as tag;
         return this.structure;
+    }
+
+    /**
+     * Sets structure of J2H root element.
+     * @param structure
+     */
+    public setStructure(structure: tag | tag[] | undefined) {
+        if (structure === undefined || typeof structure === "object")
+            this.structure = structure;
     }
 
     /**
@@ -64,8 +76,19 @@ class j2hRoot {
         try {
             let tagName = Object.keys(tag)[0],
                 attributesObject = tag[tagName],
-                isSingleton = this.isSingletonTag(tagName),
-                children: string | tag | (string | tag)[] | null = null,
+                isSingleton = this.isSingletonTag(tagName);
+
+            if (
+                !(
+                    typeof attributesObject === "object" &&
+                    attributesObject.length === undefined
+                )
+            ) {
+                if (isSingleton) return `<${tagName}/>`;
+                return `<${tagName}></${tagName}>`;
+            }
+
+            let children: string | tag | (string | tag)[] | null = null,
                 output = `<${tagName}`;
 
             for (const attributeName in attributesObject) {

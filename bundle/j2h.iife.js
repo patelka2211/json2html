@@ -8,7 +8,7 @@
 *
 * @copyright Kartavya Patel 2023
 *
-* Last updated at : 2023-04-12T06:08:52.367Z
+* Last updated at : 2023-04-12T07:00:25.211Z
 */
 var j2h = (function (exports) {
     'use strict';
@@ -23,7 +23,7 @@ var j2h = (function (exports) {
         });
     };
     /**
-     * j2hRoot provides functionalities for a j2h root element.
+     * j2hRoot provides functionalities for a J2H root element.
      */
     class j2hRoot {
         constructor(root = null) {
@@ -31,13 +31,21 @@ var j2h = (function (exports) {
             this.singletonTagCache = null;
         }
         /**
-         * Returns structure of j2h root element. Its like virtual DOM.
+         * Returns structure of J2H root element.
          * @returns
          */
         getStructure() {
             if (this.structure === undefined)
                 return {};
             return this.structure;
+        }
+        /**
+         * Sets structure of J2H root element.
+         * @param structure
+         */
+        setStructure(structure) {
+            if (structure === undefined || typeof structure === "object")
+                this.structure = structure;
         }
         /**
          * Determines whether an HTML tag is a singleton tag.
@@ -79,7 +87,14 @@ var j2h = (function (exports) {
          */
         convertSingleTag(tag) {
             try {
-                let tagName = Object.keys(tag)[0], attributesObject = tag[tagName], isSingleton = this.isSingletonTag(tagName), children = null, output = `<${tagName}`;
+                let tagName = Object.keys(tag)[0], attributesObject = tag[tagName], isSingleton = this.isSingletonTag(tagName);
+                if (!(typeof attributesObject === "object" &&
+                    attributesObject.length === undefined)) {
+                    if (isSingleton)
+                        return `<${tagName}/>`;
+                    return `<${tagName}></${tagName}>`;
+                }
+                let children = null, output = `<${tagName}`;
                 for (const attributeName in attributesObject) {
                     if (Object.prototype.hasOwnProperty.call(attributesObject, attributeName)) {
                         const attributeValue = attributesObject[attributeName];

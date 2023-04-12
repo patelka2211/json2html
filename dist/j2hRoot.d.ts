@@ -1,17 +1,25 @@
 import { tag } from "./tagGenerator";
 /**
- * j2hRoot provides functionalities for a j2h root element.
+ * j2hRoot provides functionalities for a J2H root element.
  */
 declare class j2hRoot {
     readonly root: HTMLElement | null;
+    /**
+     * Structure of innerHTML of root tag. Its like virtual DOM.
+     */
     private structure;
     private singletonTagCache;
     constructor(root?: HTMLElement | null);
     /**
-     * Returns structure of j2h root element. Its like virtual DOM.
+     * Returns structure of J2H root element.
      * @returns
      */
     getStructure(): tag | tag[];
+    /**
+     * Sets structure of J2H root element.
+     * @param structure
+     */
+    setStructure(structure: tag | tag[] | undefined): void;
     /**
      * Determines whether an HTML tag is a singleton tag.
      * @function
