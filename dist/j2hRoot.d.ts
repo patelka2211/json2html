@@ -57,5 +57,5 @@ declare class j2hRoot {
  * @param element
  * @returns
  */
-export declare function setJ2HRoot(element: HTMLElement): j2hRoot;
+export declare function setRoot(element: HTMLElement): j2hRoot;
 export {};

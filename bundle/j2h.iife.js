@@ -8,7 +8,7 @@
 *
 * @copyright Kartavya Patel 2023
 *
-* Last updated at : 2023-04-12T07:00:25.211Z
+* Last updated at : 2023-04-24T13:24:11.054Z
 */
 var j2h = (function (exports) {
     'use strict';
@@ -191,7 +191,7 @@ var j2h = (function (exports) {
      * @param element
      * @returns
      */
-    function setJ2HRoot(element) {
+    function setRoot(element) {
         return new j2hRoot(element);
     }
 
@@ -223,7 +223,7 @@ var j2h = (function (exports) {
         };
     }
 
-    exports.setJ2HRoot = setJ2HRoot;
+    exports.setRoot = setRoot;
     exports.tag = tagGenerator;
 
     return exports;

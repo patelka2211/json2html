@@ -176,6 +176,6 @@ class j2hRoot {
  * @param element
  * @returns
  */
-export function setJ2HRoot(element) {
+export function setRoot(element) {
     return new j2hRoot(element);
 }

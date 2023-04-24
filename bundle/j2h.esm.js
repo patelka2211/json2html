@@ -8,7 +8,7 @@
 *
 * @copyright Kartavya Patel 2023
 *
-* Last updated at : 2023-04-12T07:00:25.211Z
+* Last updated at : 2023-04-24T13:24:11.054Z
 */
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -188,7 +188,7 @@ class j2hRoot {
  * @param element
  * @returns
  */
-function setJ2HRoot(element) {
+function setRoot(element) {
     return new j2hRoot(element);
 }
 
@@ -220,4 +220,4 @@ function tagGenerator(tag, attributes = {}) {
     };
 }
 
-export { setJ2HRoot, tagGenerator as tag };
+export { tagGenerator as j2hTag, setRoot as setJ2HRoot };
