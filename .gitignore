@@ -4,9 +4,5 @@
 # VSCode settings
 .vscode
 
-# Ignored files and folders in this branch.
-rollup.config.mjs
-tsconfig.json
-
 # Don't change this. This is common ignored folder between all branches.
 ignored
